@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Progress {
+public class Recommendation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,20 +21,18 @@ public class Progress {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "microlesson_id", nullable = false)
-    private MicroLesson microLesson;
+    private LocalDateTime generatedAt;
 
-    private String status; // NOT_STARTED / IN_PROGRESS / COMPLETED
+    @Column(length = 2000)
+    private String recommendedLessonIds;
 
-    private Integer progressPercent; // 0–100
+    @Column(length = 2000)
+    private String basisSnapshot;
 
-    private LocalDateTime lastAccessedAt;
-
-    private Double score;
+    private Double confidenceScore;
 
     @PrePersist
     public void prePersist() {
-        this.lastAccessedAt = LocalDateTime.now();
+        this.generatedAt = LocalDateTime.now();
     }
 }
