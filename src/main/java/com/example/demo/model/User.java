@@ -6,11 +6,8 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "users")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 @Builder
 public class User {
 
@@ -23,10 +20,8 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
     private String role; // LEARNER / INSTRUCTOR / ADMIN
 
     private String preferredLearningStyle;
@@ -34,10 +29,8 @@ public class User {
     private LocalDateTime createdAt;
 
     @PrePersist
-    public void prePersist() {
-        this.createdAt = LocalDateTime.now();
-        if (this.role == null) {
-            this.role = "LEARNER";
-        }
+    void onCreate() {
+        createdAt = LocalDateTime.now();
+        if (role == null) role = "LEARNER";
     }
 }

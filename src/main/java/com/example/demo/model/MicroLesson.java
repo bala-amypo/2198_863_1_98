@@ -6,10 +6,8 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 @Builder
 public class MicroLesson {
 
@@ -17,19 +15,18 @@ public class MicroLesson {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "course_id", nullable = false)
-    private Course course;
-
     private String title;
 
     private Integer durationMinutes;
 
-    private String contentType; // VIDEO / ARTICLE / QUIZ
+    private String contentType;
 
-    private String difficulty; // BEGINNER / INTERMEDIATE / ADVANCED
+    private String difficulty;
 
     private String tags;
 
     private LocalDate publishDate;
+
+    @ManyToOne
+    private Course course;
 }
