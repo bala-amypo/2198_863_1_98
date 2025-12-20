@@ -1,36 +1,46 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Entity
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor
-@Builder
+@Table(name = "users")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String fullName;
-
-    @Column(unique = true, nullable = false)
     private String email;
-
     private String password;
+    private String role;
 
-    private String role; // LEARNER / INSTRUCTOR / ADMIN
+    public User() {}
 
-    private String preferredLearningStyle;
+    public Long getId() {
+        return id;
+    }
 
-    private LocalDateTime createdAt;
+    public String getEmail() {
+        return email;
+    }
 
-    @PrePersist
-    void onCreate() {
-        createdAt = LocalDateTime.now();
-        if (role == null) role = "LEARNER";
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
