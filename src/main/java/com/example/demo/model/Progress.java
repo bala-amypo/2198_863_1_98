@@ -2,12 +2,13 @@ package com.example.demo.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDateTime;
 
 @Entity
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor
+@Table(name = "progress")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class Progress {
 
@@ -15,22 +16,36 @@ public class Progress {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "micro_lesson_id", nullable = false)
     private MicroLesson microLesson;
 
-    private String status; // NOT_STARTED / IN_PROGRESS / COMPLETED
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Status status;
 
-    private Integer progressPercent;
+    @Column(nullable = false)
+    private Integer progressPercent; // 0-100
 
+    @Column(nullable = false)
     private LocalDateTime lastAccessedAt;
 
-    private Double score;
+    private Double score; // nullable
 
     @PrePersist
-    void onAccess() {
+    @PreUpdate
+    protected void onUpdate() {
         lastAccessedAt = LocalDateTime.now();
+        if (status == Status.COMPLETED) {
+            progressPercent = 100;
+        }
     }
+}
+
+enum Status {
+    NOT_STARTED, IN_PROGRESS, COMPLETED
 }
