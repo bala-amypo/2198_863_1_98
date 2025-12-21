@@ -32,7 +32,6 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // 🔓 Public endpoints
                 .requestMatchers(
-                    "/",
                     "/error",
                     "/auth/**",
                     "/v3/api-docs/**",
