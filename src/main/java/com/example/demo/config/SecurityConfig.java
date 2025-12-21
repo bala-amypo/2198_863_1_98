@@ -27,24 +27,22 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session ->
-                    session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(auth -> auth
-                    // 🔓 Auth endpoints
-                    .requestMatchers("/auth/**").permitAll()
+                // 🔓 Public endpoints
+                .requestMatchers(
+                    "/",
+                    "/error",
+                    "/auth/**",
+                    "/v3/api-docs/**",
+                    "/swagger-ui/**",
+                    "/swagger-ui.html",
+                    "/label/**"   // whitelist your label endpoints
+                ).permitAll()
 
-                    // 🔓 Swagger endpoints
-                    .requestMatchers(
-                            "/",
-                            "/error",
-                            "/auth/**",
-                            "/v3/api-docs/**",
-                            "/swagger-ui/**",
-                            "/swagger-ui.html"
-                    ).permitAll()
-
-                    // 🔒 Everything else
-                    .anyRequest().authenticated()
+                // 🔒 Everything else requires authentication
+                .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
