@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class LessonServiceImpl implements LessonService {
@@ -15,17 +16,23 @@ public class LessonServiceImpl implements LessonService {
     private LessonRepository lessonRepository;
 
     @Override
-    public Lesson addLesson(Lesson lesson) {
+    public List<Lesson> getAllLessons() {
+        return lessonRepository.findAll();
+    }
+
+    @Override
+    public Lesson getLesson(Long id) {
+        Optional<Lesson> lesson = lessonRepository.findById(id);
+        return lesson.orElse(null);
+    }
+
+    @Override
+    public Lesson saveLesson(Lesson lesson) {
         return lessonRepository.save(lesson);
     }
 
     @Override
-    public Lesson getLessonById(Long id) {
-        return lessonRepository.findById(id).orElse(null);
-    }
-
-    @Override
-    public List<Lesson> getAllLessons() {
-        return lessonRepository.findAll();
+    public void deleteLesson(Long id) {
+        lessonRepository.deleteById(id);
     }
 }
