@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.model.MicroLesson;
+import com.example.demo.entity.MicroLesson;
 
 public interface LessonService {
 
