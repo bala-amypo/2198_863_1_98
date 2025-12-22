@@ -2,7 +2,7 @@ package com.example.demo.service.impl;
 
 import com.example.demo.model.MicroLesson;
 import com.example.demo.model.Course;
-import com.example.demo.repository.LessonRepository;
+import com.example.demo.repository.MicroLessonRepository;
 import com.example.demo.repository.CourseRepository;
 import com.example.demo.service.LessonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ import java.util.List;
 public class LessonServiceImpl implements LessonService {
 
     @Autowired
-    private LessonRepository lessonRepository;
+    private MicroLessonRepository lessonRepository; // corrected
 
     @Autowired
     private CourseRepository courseRepository;
@@ -33,6 +33,8 @@ public class LessonServiceImpl implements LessonService {
         lesson.setDurationMinutes(lessonDetails.getDurationMinutes());
         lesson.setContentType(lessonDetails.getContentType());
         lesson.setDifficulty(lessonDetails.getDifficulty());
+        lesson.setTags(lessonDetails.getTags());
+        lesson.setPublishDate(lessonDetails.getPublishDate());
         lesson.setCourse(lessonDetails.getCourse());
 
         return lessonRepository.save(lesson);
