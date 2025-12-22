@@ -6,5 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface MicroLessonRepository extends JpaRepository<MicroLesson, Long> {
-    List<MicroLesson> findByFilters(String tags, String difficulty, String contentType);
+
+    List<MicroLesson> findByTagsAndDifficultyAndContentType(
+            String tags,
+            String difficulty,
+            String contentType
+    );
 }
+
