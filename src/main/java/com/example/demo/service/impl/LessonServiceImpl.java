@@ -20,21 +20,29 @@ public class LessonServiceImpl implements LessonService {
         this.courseRepository = courseRepository;
     }
 
+    @Override
     public MicroLesson addLesson(Long courseId, MicroLesson lesson) {
         Course course = courseRepository.findById(courseId).orElse(null);
         lesson.setCourse(course);
         return lessonRepository.save(lesson);
     }
 
+    @Override
     public MicroLesson updateLesson(Long lessonId, MicroLesson lesson) {
         lesson.setId(lessonId);
         return lessonRepository.save(lesson);
     }
 
+    @Override
     public List<MicroLesson> findLessonsByFilters(String tags, String difficulty, String contentType) {
-        return lessonRepository.findByFilters(tags, difficulty, contentType);
+        return lessonRepository.findByTagsAndDifficultyAndContentType(
+                tags,
+                difficulty,
+                contentType
+        );
     }
 
+    @Override
     public MicroLesson getLesson(Long lessonId) {
         return lessonRepository.findById(lessonId).orElse(null);
     }
