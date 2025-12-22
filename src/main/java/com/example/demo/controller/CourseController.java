@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.Course;
+import com.example.demo.entity.Course;
 import com.example.demo.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
