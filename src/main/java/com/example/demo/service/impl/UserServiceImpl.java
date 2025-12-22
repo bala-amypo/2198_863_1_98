@@ -1,6 +1,6 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.model.User;
+import com.example.demo.entity.UserAccount;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,33 +15,32 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Override
-    public List<User> getAllUsers() {
+    public UserAccount findById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id " + id));
+    }
+
+    @Override
+    public List<UserAccount> getAllUsers() {
         return userRepository.findAll();
     }
 
     @Override
-    public User findById(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
-    }
-
-    @Override
-    public User createUser(User user) {
+    public UserAccount createUser(UserAccount user) {
         return userRepository.save(user);
     }
 
     @Override
-    public User updateUser(Long id, User userDetails) {
-        User user = findById(id);
+    public UserAccount updateUser(Long id, UserAccount userDetails) {
+        UserAccount user = findById(id);
         user.setFullName(userDetails.getFullName());
         user.setEmail(userDetails.getEmail());
-        user.setPassword(userDetails.getPassword());
         return userRepository.save(user);
     }
 
     @Override
     public void deleteUser(Long id) {
-        User user = findById(id);
+        UserAccount user = findById(id);
         userRepository.delete(user);
     }
 }

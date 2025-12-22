@@ -1,6 +1,6 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.model.Recommendation;
+import com.example.demo.entity.Recommendation;
 import com.example.demo.repository.RecommendationRepository;
 import com.example.demo.service.RecommendationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +16,7 @@ public class RecommendationServiceImpl implements RecommendationService {
 
     @Override
     public List<Recommendation> getRecommendations(Long userId) {
+        // Assuming repository has a method to find by userId
         return recommendationRepository.findByUserId(userId);
     }
 
@@ -27,7 +28,7 @@ public class RecommendationServiceImpl implements RecommendationService {
     @Override
     public Recommendation updateRecommendation(Long id, Recommendation recommendationDetails) {
         Recommendation recommendation = recommendationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Recommendation not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("Recommendation not found with id " + id));
         recommendation.setCourse(recommendationDetails.getCourse());
         recommendation.setReason(recommendationDetails.getReason());
         return recommendationRepository.save(recommendation);
@@ -36,7 +37,7 @@ public class RecommendationServiceImpl implements RecommendationService {
     @Override
     public void deleteRecommendation(Long id) {
         Recommendation recommendation = recommendationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Recommendation not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("Recommendation not found with id " + id));
         recommendationRepository.delete(recommendation);
     }
 }
