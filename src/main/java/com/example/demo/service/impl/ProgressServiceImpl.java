@@ -1,58 +1,63 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.model.MicroLesson;
 import com.example.demo.model.Progress;
+import com.example.demo.model.MicroLesson;
 import com.example.demo.model.User;
-import com.example.demo.repository.MicroLessonRepository;
 import com.example.demo.repository.ProgressRepository;
+import com.example.demo.repository.MicroLessonRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.ProgressService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class ProgressServiceImpl implements ProgressService {
 
-    private final ProgressRepository progressRepository;
-    private final UserRepository userRepository;
-    private final MicroLessonRepository lessonRepository;
+    @Autowired
+    private ProgressRepository progressRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private MicroLessonRepository lessonRepository;
 
     @Override
-    public Progress recordProgress(Long userId, Long lessonId, Progress progress) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
-        MicroLesson lesson = lessonRepository.findById(lessonId)
-                .orElseThrow(() -> new ResourceNotFoundException("Lesson not found"));
-
-        Progress existing = progressRepository
-                .findByUserIdAndMicroLessonId(userId, lessonId)
-                .orElse(null);
-
-        if (existing != null) {
-            existing.setStatus(progress.getStatus());
-            existing.setProgressPercent(progress.getProgressPercent());
-            existing.setScore(progress.getScore());
-            return progressRepository.save(existing);
-        }
-
-        progress.setUser(user);
-        progress.setMicroLesson(lesson);
+    public Progress createProgress(Progress progress) {
         return progressRepository.save(progress);
     }
 
     @Override
-    public Progress getProgress(Long userId, Long lessonId) {
-        return progressRepository.findByUserIdAndMicroLessonId(userId, lessonId)
-                .orElseThrow(() -> new ResourceNotFoundException("Progress not found"));
+    public Progress updateProgress(Long progressId, Progress progressDetails) {
+        Progress progress = progressRepository.findById(progressId)
+                .orElseThrow(() -> new RuntimeException("Progress not found with id: " + progressId));
+
+        progress.setStatus(progressDetails.getStatus());
+        progress.setProgressPercent(progressDetails.getProgressPercent());
+        progress.setScore(progressDetails.getScore());
+        progress.setUser(progressDetails.getUser());
+        progress.setMicroLesson(progressDetails.getMicroLesson());
+
+        return progressRepository.save(progress);
     }
 
     @Override
-    public List<Progress> getUserProgress(Long userId) {
-        return progressRepository.findByUserIdOrderByLastAccessedAtDesc(userId);
+    public void deleteProgress(Long progressId) {
+        Progress progress = progressRepository.findById(progressId)
+                .orElseThrow(() -> new RuntimeException("Progress not found with id: " + progressId));
+        progressRepository.delete(progress);
+    }
+
+    @Override
+    public List<Progress> getAllProgress() {
+        return progressRepository.findAll();
+    }
+
+    @Override
+    public Progress getProgressById(Long progressId) {
+        return progressRepository.findById(progressId)
+                .orElseThrow(() -> new RuntimeException("Progress not found with id: " + progressId));
     }
 }

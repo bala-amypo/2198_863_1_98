@@ -1,52 +1,58 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.model.Course;
 import com.example.demo.model.MicroLesson;
+import com.example.demo.model.Course;
+import com.example.demo.repository.LessonRepository;
 import com.example.demo.repository.CourseRepository;
-import com.example.demo.repository.MicroLessonRepository;
 import com.example.demo.service.LessonService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
-@RequiredArgsConstructor
 public class LessonServiceImpl implements LessonService {
 
-    private final MicroLessonRepository lessonRepository;
-    private final CourseRepository courseRepository;
+    @Autowired
+    private LessonRepository lessonRepository;
+
+    @Autowired
+    private CourseRepository courseRepository;
 
     @Override
-    public MicroLesson addLesson(Long courseId, MicroLesson lesson) {
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
-
-        if (lesson.getDurationMinutes() <= 0 || lesson.getDurationMinutes() > 15) {
-            throw new IllegalArgumentException("Lesson duration must be between 1 and 15 minutes");
-        }
-
-        lesson.setCourse(course);
+    public MicroLesson createLesson(MicroLesson lesson) {
         return lessonRepository.save(lesson);
     }
 
     @Override
-    public MicroLesson updateLesson(Long lessonId, MicroLesson lesson) {
-        MicroLesson existing = lessonRepository.findById(lessonId)
-                .orElseThrow(() -> new ResourceNotFoundException("Lesson not found"));
+    public MicroLesson updateLesson(Long lessonId, MicroLesson lessonDetails) {
+        MicroLesson lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(() -> new RuntimeException("Lesson not found with id: " + lessonId));
 
-        existing.setTitle(lesson.getTitle());
-        existing.setDurationMinutes(lesson.getDurationMinutes());
-        existing.setContentType(lesson.getContentType());
-        existing.setDifficulty(lesson.getDifficulty());
-        existing.setTags(lesson.getTags());
-        existing.setPublishDate(lesson.getPublishDate());
+        lesson.setTitle(lessonDetails.getTitle());
+        lesson.setDurationMinutes(lessonDetails.getDurationMinutes());
+        lesson.setContentType(lessonDetails.getContentType());
+        lesson.setDifficulty(lessonDetails.getDifficulty());
+        lesson.setCourse(lessonDetails.getCourse());
 
-        return lessonRepository.save(existing);
+        return lessonRepository.save(lesson);
     }
 
     @Override
-    public MicroLesson getLesson(Long lessonId) {
+    public void deleteLesson(Long lessonId) {
+        MicroLesson lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(() -> new RuntimeException("Lesson not found with id: " + lessonId));
+        lessonRepository.delete(lesson);
+    }
+
+    @Override
+    public List<MicroLesson> getAllLessons() {
+        return lessonRepository.findAll();
+    }
+
+    @Override
+    public MicroLesson getLessonById(Long lessonId) {
         return lessonRepository.findById(lessonId)
-                .orElseThrow(() -> new ResourceNotFoundException("Lesson not found"));
+                .orElseThrow(() -> new RuntimeException("Lesson not found with id: " + lessonId));
     }
 }
