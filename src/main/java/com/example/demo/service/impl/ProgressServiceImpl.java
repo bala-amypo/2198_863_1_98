@@ -1,6 +1,6 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.Progress;
+import com.example.demo.model.Progress;
 import com.example.demo.repository.ProgressRepository;
 import com.example.demo.service.ProgressService;
 import org.springframework.beans.factory.annotation.Autowired;
