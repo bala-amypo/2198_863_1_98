@@ -1,11 +1,10 @@
 package com.example.demo.controller;
 
-import java.util.List;
-
+import com.example.demo.model.Course;
+import com.example.demo.service.CourseService;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.demo.entity.Course;
-import com.example.demo.service.CourseService;
+import java.util.List;
 
 @RestController
 @RequestMapping("/courses")
@@ -19,7 +18,7 @@ public class CourseController {
 
     @PostMapping
     public Course createCourse(@RequestBody Course course) {
-        return courseService.createCourse(course);
+        return courseService.saveCourse(course);
     }
 
     @GetMapping

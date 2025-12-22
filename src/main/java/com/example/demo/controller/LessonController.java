@@ -1,11 +1,10 @@
 package com.example.demo.controller;
 
-import java.util.List;
-
+import com.example.demo.model.MicroLesson;
+import com.example.demo.service.LessonService;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.demo.entity.MicroLesson;
-import com.example.demo.service.LessonService;
+import java.util.List;
 
 @RestController
 @RequestMapping("/lessons")
@@ -19,11 +18,11 @@ public class LessonController {
 
     @PostMapping
     public MicroLesson createLesson(@RequestBody MicroLesson lesson) {
-        return lessonService.createLesson(lesson);
+        return lessonService.saveLesson(lesson);
     }
 
     @GetMapping("/difficulty/{level}")
-    public List<MicroLesson> getLessonsByDifficulty(@PathVariable String level) {
+    public List<MicroLesson> getByDifficulty(@PathVariable String level) {
         return lessonService.getLessonsByDifficulty(level);
     }
 }
