@@ -1,39 +1,37 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.model.Recommendation;
+import com.example.demo.repository.RecommendationRepository;
+import com.example.demo.service.RecommendationService;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.dto.RecommendationRequest;
-import com.example.demo.entity.Recommendation;
-import com.example.demo.entity.User;
-import com.example.demo.repository.RecommendationRepository;
-import com.example.demo.repository.UserRepository;
-import com.example.demo.service.RecommendationService;
+import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class RecommendationServiceImpl implements RecommendationService {
 
     private final RecommendationRepository recommendationRepository;
-    private final UserRepository userRepository;
 
-    public RecommendationServiceImpl(RecommendationRepository recommendationRepository,
-                                     UserRepository userRepository) {
+    public RecommendationServiceImpl(RecommendationRepository recommendationRepository) {
         this.recommendationRepository = recommendationRepository;
-        this.userRepository = userRepository;
     }
 
-    @Override
-    public Recommendation generateRecommendation(Long userId,
-                                                 RecommendationRequest request) {
-
-        User user = userRepository.findById(userId).orElse(null);
-
-        Recommendation recommendation = Recommendation.builder()
-                .user(user)
+    public Recommendation generateRecommendation(Long userId) {
+        Recommendation rec = Recommendation.builder()
                 .recommendedLessonIds("1,2,3")
-                .basisSnapshot(request.getLearningGoal())
-                .confidenceScore(null)
+                .basisSnapshot("recent_activity")
+                .confidenceScore(java.math.BigDecimal.valueOf(0.8))
                 .build();
+        return recommendationRepository.save(rec);
+    }
 
-        return recommendationRepository.save(recommendation);
+    public Recommendation getLatestRecommendation(Long userId) {
+        List<Recommendation> list = recommendationRepository.findByUserIdOrderByGeneratedAtDesc(userId);
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    public List<Recommendation> getRecommendations(Long userId, LocalDate from, LocalDate to) {
+        return recommendationRepository.findAll();
     }
 }
