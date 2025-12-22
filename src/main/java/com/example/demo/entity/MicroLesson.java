@@ -1,4 +1,4 @@
-package com.example.demo.model;
+package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -30,5 +30,6 @@ public class MicroLesson {
     private LocalDate publishDate;
 
     @ManyToOne
+    @JoinColumn(name = "course_id")
     private Course course;
 }
