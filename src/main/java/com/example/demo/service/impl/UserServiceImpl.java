@@ -1,41 +1,41 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.User;
-import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
+    private final UserRepository repo;
 
-    public UserServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserServiceImpl(UserRepository repo) {
+        this.repo = repo;
     }
 
-    @Override
-    public User createUser(User user) {
-        return userRepository.save(user);
+    public User saveUser(User user) {
+        return repo.save(user);
     }
 
-    @Override
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+        return repo.findAll();
     }
 
-    @Override
     public User getUserById(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("User not found with id: " + id));
+        return repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-    @Override
+    public User updateUser(Long id, User user) {
+        User existing = getUserById(id);
+        existing.setName(user.getName());
+        existing.setEmail(user.getEmail());
+        return repo.save(existing);
+    }
+
     public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+        repo.deleteById(id);
     }
 }
