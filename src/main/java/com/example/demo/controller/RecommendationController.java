@@ -4,6 +4,8 @@ import com.example.demo.model.Recommendation;
 import com.example.demo.service.RecommendationService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/recommendations")
 public class RecommendationController {
@@ -14,8 +16,13 @@ public class RecommendationController {
         this.recommendationService = recommendationService;
     }
 
-    @GetMapping("/{userId}")
-    public Recommendation getRecommendation(@PathVariable Long userId) {
+    @PostMapping("/generate")
+    public Recommendation generate(@RequestParam Long userId) {
         return recommendationService.generateRecommendation(userId);
+    }
+
+    @GetMapping("/latest")
+    public Recommendation latest(@RequestParam Long userId) {
+        return recommendationService.getLatestRecommendation(userId);
     }
 }

@@ -16,13 +16,16 @@ public class LessonController {
         this.lessonService = lessonService;
     }
 
-    @PostMapping
-    public MicroLesson createLesson(@RequestBody MicroLesson lesson) {
-        return lessonService.saveLesson(lesson);
+    @PostMapping("/course/{courseId}")
+    public MicroLesson add(@PathVariable Long courseId, @RequestBody MicroLesson lesson) {
+        return lessonService.addLesson(courseId, lesson);
     }
 
-    @GetMapping("/difficulty/{level}")
-    public List<MicroLesson> getByDifficulty(@PathVariable String level) {
-        return lessonService.getLessonsByDifficulty(level);
+    @GetMapping("/search")
+    public List<MicroLesson> search(
+            @RequestParam String tags,
+            @RequestParam String difficulty,
+            @RequestParam String contentType) {
+        return lessonService.findLessonsByFilters(tags, difficulty, contentType);
     }
 }

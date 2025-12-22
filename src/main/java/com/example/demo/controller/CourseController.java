@@ -17,12 +17,17 @@ public class CourseController {
     }
 
     @PostMapping
-    public Course createCourse(@RequestBody Course course) {
-        return courseService.saveCourse(course);
+    public Course create(@RequestBody Course course, @RequestParam Long instructorId) {
+        return courseService.createCourse(course, instructorId);
     }
 
-    @GetMapping
-    public List<Course> getAllCourses() {
-        return courseService.getAllCourses();
+    @GetMapping("/{id}")
+    public Course get(@PathVariable Long id) {
+        return courseService.getCourse(id);
+    }
+
+    @GetMapping("/instructor/{id}")
+    public List<Course> list(@PathVariable Long id) {
+        return courseService.listCoursesByInstructor(id);
     }
 }
