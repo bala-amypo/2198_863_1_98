@@ -16,3 +16,4 @@ public interface RecommendationRepository extends JpaRepository<Recommendation, 
 
     List<Recommendation> findByUserIdOrderByGeneratedAtDesc(Long userId);
 }
+mvn spring-boot:run -DskipTests
