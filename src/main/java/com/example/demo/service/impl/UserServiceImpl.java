@@ -6,14 +6,12 @@ import com.example.demo.service.UserService;
 import com.example.demo.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
     public User register(User user) {
@@ -23,7 +21,8 @@ public class UserServiceImpl implements UserService {
         if (user.getRole() == null) {
             user.setRole("LEARNER");
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        // Password is stored as plain text
         return userRepository.save(user);
     }
 
