@@ -3,7 +3,6 @@ package com.example.demo.service.impl;
 import com.example.demo.model.Course;
 import com.example.demo.model.User;
 import com.example.demo.repository.CourseRepository;
-import com.example.demo.repository.UserRepository;
 import com.example.demo.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,8 +15,16 @@ public class CourseServiceImpl implements CourseService {
     @Autowired
     private CourseRepository courseRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    @Override
+    public List<Course> getAllCourses() {
+        return courseRepository.findAll();
+    }
+
+    @Override
+    public Course getCourse(Long id) {
+        return courseRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Course not found with id: " + id));
+    }
 
     @Override
     public Course createCourse(Course course) {
@@ -25,32 +32,17 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Course updateCourse(Long courseId, Course courseDetails) {
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new RuntimeException("Course not found with id: " + courseId));
-
+    public Course updateCourse(Long id, Course courseDetails) {
+        Course course = getCourse(id);
         course.setTitle(courseDetails.getTitle());
         course.setDescription(courseDetails.getDescription());
         course.setInstructor(courseDetails.getInstructor());
-
         return courseRepository.save(course);
     }
 
     @Override
-    public void deleteCourse(Long courseId) {
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new RuntimeException("Course not found with id: " + courseId));
+    public void deleteCourse(Long id) {
+        Course course = getCourse(id);
         courseRepository.delete(course);
-    }
-
-    @Override
-    public List<Course> getAllCourses() {
-        return courseRepository.findAll();
-    }
-
-    @Override
-    public Course getCourseById(Long courseId) {
-        return courseRepository.findById(courseId)
-                .orElseThrow(() -> new RuntimeException("Course not found with id: " + courseId));
     }
 }

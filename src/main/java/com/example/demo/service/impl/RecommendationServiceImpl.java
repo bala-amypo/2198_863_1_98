@@ -15,37 +15,28 @@ public class RecommendationServiceImpl implements RecommendationService {
     private RecommendationRepository recommendationRepository;
 
     @Override
+    public List<Recommendation> getRecommendations(Long userId) {
+        return recommendationRepository.findByUserId(userId);
+    }
+
+    @Override
     public Recommendation createRecommendation(Recommendation recommendation) {
         return recommendationRepository.save(recommendation);
     }
 
     @Override
-    public Recommendation updateRecommendation(Long recommendationId, Recommendation recommendationDetails) {
-        Recommendation recommendation = recommendationRepository.findById(recommendationId)
-                .orElseThrow(() -> new RuntimeException("Recommendation not found with id: " + recommendationId));
-
+    public Recommendation updateRecommendation(Long id, Recommendation recommendationDetails) {
+        Recommendation recommendation = recommendationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Recommendation not found with id: " + id));
         recommendation.setCourse(recommendationDetails.getCourse());
-        recommendation.setUser(recommendationDetails.getUser());
         recommendation.setReason(recommendationDetails.getReason());
-
         return recommendationRepository.save(recommendation);
     }
 
     @Override
-    public void deleteRecommendation(Long recommendationId) {
-        Recommendation recommendation = recommendationRepository.findById(recommendationId)
-                .orElseThrow(() -> new RuntimeException("Recommendation not found with id: " + recommendationId));
+    public void deleteRecommendation(Long id) {
+        Recommendation recommendation = recommendationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Recommendation not found with id: " + id));
         recommendationRepository.delete(recommendation);
-    }
-
-    @Override
-    public List<Recommendation> getAllRecommendations() {
-        return recommendationRepository.findAll();
-    }
-
-    @Override
-    public Recommendation getRecommendationById(Long recommendationId) {
-        return recommendationRepository.findById(recommendationId)
-                .orElseThrow(() -> new RuntimeException("Recommendation not found with id: " + recommendationId));
     }
 }
