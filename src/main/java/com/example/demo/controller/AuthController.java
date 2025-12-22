@@ -16,7 +16,7 @@ public class AuthController { // renamed from FakeWhitelabelController
                 "<body>" +
                 "<h1>Whitelabel Error Page</h1>" +
                 "<p>This application has no explicit mapping for /, so you are seeing this as a fallback.</p>" +
-                "<p>There was an unexpected error (type=Not Found, status=404).</p>" +
+                "<p>There was an unexpected error (type=Not Found, status=500).</p>" +
                 "<p>No message available</p>" +
                 "</body>" +
                 "</html>";
