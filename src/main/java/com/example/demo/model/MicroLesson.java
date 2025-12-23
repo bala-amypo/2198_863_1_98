@@ -25,10 +25,13 @@ public class MicroLesson {
 
     @Column(nullable = false)
     private String contentType;
+
     private String difficulty;
     private String tags;
     private LocalDate publishDate;
 
-    @ManyToOne
+    // ✅ IMPORTANT FIX
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "course_id", nullable = false)
     private Course course;
 }
