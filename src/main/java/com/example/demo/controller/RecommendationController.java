@@ -2,36 +2,40 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Recommendation;
 import com.example.demo.service.RecommendationService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 
 @RestController
 @RequestMapping("/recommendations")
-@RequiredArgsConstructor
 public class RecommendationController {
-
+    
     private final RecommendationService recommendationService;
-
+    
+    public RecommendationController(RecommendationService recommendationService) {
+        this.recommendationService = recommendationService;
+    }
+    
     @PostMapping("/generate")
-    public Recommendation generateRecommendation(
-            @RequestParam Long userId,
-            @RequestParam String tags,
-            @RequestParam String difficulty) {
-        return recommendationService.generateRecommendation(userId, tags, difficulty);
+    public ResponseEntity<Recommendation> generateRecommendation(@RequestParam Long userId) {
+        Recommendation recommendation = recommendationService.generateRecommendation(userId);
+        return ResponseEntity.ok(recommendation);
     }
-
-    @GetMapping("/latest/{userId}")
-    public Recommendation getLatest(@PathVariable Long userId) {
-        return recommendationService.getLatestRecommendation(userId);
+    
+    @GetMapping("/latest")
+    public ResponseEntity<Recommendation> getLatestRecommendation(@RequestParam Long userId) {
+        Recommendation recommendation = recommendationService.getLatestRecommendation(userId);
+        return ResponseEntity.ok(recommendation);
     }
-
+    
     @GetMapping("/user/{userId}")
-    public List<Recommendation> getRecommendations(
+    public ResponseEntity<List<Recommendation>> getRecommendations(
             @PathVariable Long userId,
-            @RequestParam LocalDate from,
-            @RequestParam LocalDate to) {
-        return recommendationService.getRecommendations(userId, from, to);
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+        List<Recommendation> recommendations = recommendationService.getRecommendations(userId, from, to);
+        return ResponseEntity.ok(recommendations);
     }
 }
