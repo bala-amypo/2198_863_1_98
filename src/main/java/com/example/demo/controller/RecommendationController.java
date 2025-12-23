@@ -2,8 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Recommendation;
 import com.example.demo.service.RecommendationService;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.ResponseEntity;
+import com.example.demo.dto.RecommendationRequest;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
@@ -11,31 +10,20 @@ import java.util.List;
 @RestController
 @RequestMapping("/recommendations")
 public class RecommendationController {
-    
+
     private final RecommendationService recommendationService;
-    
+
     public RecommendationController(RecommendationService recommendationService) {
         this.recommendationService = recommendationService;
     }
-    
+
     @PostMapping("/generate")
-    public ResponseEntity<Recommendation> generateRecommendation(@RequestParam Long userId) {
-        Recommendation recommendation = recommendationService.generateRecommendation(userId);
-        return ResponseEntity.ok(recommendation);
+    public Recommendation generate(@RequestBody RecommendationRequest request) {
+        return recommendationService.generateRecommendation(request);
     }
-    
-    @GetMapping("/latest")
-    public ResponseEntity<Recommendation> getLatestRecommendation(@RequestParam Long userId) {
-        Recommendation recommendation = recommendationService.getLatestRecommendation(userId);
-        return ResponseEntity.ok(recommendation);
-    }
-    
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Recommendation>> getRecommendations(
-            @PathVariable Long userId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
-        List<Recommendation> recommendations = recommendationService.getRecommendations(userId, from, to);
-        return ResponseEntity.ok(recommendations);
+
+    @GetMapping
+    public List<Recommendation> getAll() {
+        return recommendationService.getAllRecommendations();
     }
 }
