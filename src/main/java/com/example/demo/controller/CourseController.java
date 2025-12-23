@@ -31,4 +31,10 @@ public class CourseController {
     public Course get(@PathVariable Long id) {
         return courseService.getCourse(id);
     }
+
+    // ✅ ADDED
+    @GetMapping
+    public List<Course> getAllCourses() {
+        return courseService.getAllCourses();
+    }
 }

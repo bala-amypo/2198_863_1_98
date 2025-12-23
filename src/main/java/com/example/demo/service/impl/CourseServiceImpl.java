@@ -44,4 +44,10 @@ public class CourseServiceImpl implements CourseService {
         return courseRepository.findById(courseId)
                 .orElseThrow(() -> new RuntimeException("Course not found"));
     }
+
+    // ✅ THIS IS THE ONLY MISSING PART
+    @Override
+    public List<Course> getAllCourses() {
+        return courseRepository.findAll();
+    }
 }
