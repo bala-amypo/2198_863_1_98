@@ -1,40 +1,44 @@
-package com.example.demo.service.impl;
+// package com.example.demo.service.impl;
 
-import com.example.demo.model.User;
-import com.example.demo.repository.UserRepository;
-import com.example.demo.service.UserService;
-import com.example.demo.exception.ResourceNotFoundException;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+// import com.example.demo.dto.AuthResponse;
+// import com.example.demo.model.User;
+// import com.example.demo.repository.UserRepository;
+// import com.example.demo.service.UserService;
+// import org.springframework.stereotype.Service;
 
-@Service
-@RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+// @Service
+// public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
+//     private final UserRepository userRepository;
 
-    @Override
-    public User register(User user) {
-        if (userRepository.existsByEmail(user.getEmail())) {
-            throw new IllegalArgumentException("Email already exists");
-        }
-        if (user.getRole() == null) {
-            user.setRole("LEARNER");
-        }
+//     public UserServiceImpl(UserRepository userRepository) {
+//         this.userRepository = userRepository;
+//     }
 
-        // Password is stored as plain text
-        return userRepository.save(user);
-    }
+//     // REAL (needed for DB insert)
+//     @Override
+//     public User register(User user) {
+//         if (user.getRole() == null) {
+//             user.setRole("LEARNER");
+//         }
+//         return userRepository.save(user);
+//     }
 
-    @Override
-    public User findById(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-    }
+//     // DUMMY (required only to satisfy interface)
+//     @Override
+//     public AuthResponse login(String email, String password) {
+//         return new AuthResponse();
+//     }
 
-    @Override
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-    }
-}
+//     // DUMMY
+//     @Override
+//     public User findById(Long id) {
+//         return null;
+//     }
+
+//     // DUMMY
+//     @Override
+//     public User findByEmail(String email) {
+//         return null;
+//     }
+// }

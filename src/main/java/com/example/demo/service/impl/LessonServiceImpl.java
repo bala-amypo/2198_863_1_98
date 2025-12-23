@@ -1,29 +1,36 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.model.Course;
-import com.example.demo.model.MicroLesson;
-import com.example.demo.repository.CourseRepository;
-import com.example.demo.repository.MicroLessonRepository;
-import com.example.demo.service.LessonService;
 import com.example.demo.exception.ResourceNotFoundException;
-import lombok.RequiredArgsConstructor;
+import com.example.demo.model.MicroLesson;
+import com.example.demo.repository.MicroLessonRepository;
+import com.example.demo.repository.CourseRepository;
+import com.example.demo.model.Course;
+
+import com.example.demo.service.LessonService;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class LessonServiceImpl implements LessonService {
 
     private final MicroLessonRepository lessonRepository;
     private final CourseRepository courseRepository;
 
+    public LessonServiceImpl(MicroLessonRepository lessonRepository,
+                             CourseRepository courseRepository) {
+        this.lessonRepository = lessonRepository;
+        this.courseRepository = courseRepository;
+    }
+
     @Override
     public MicroLesson addLesson(Long courseId, MicroLesson lesson) {
+
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
 
-        if (lesson.getDurationMinutes() == null || lesson.getDurationMinutes() <= 0 || lesson.getDurationMinutes() > 15) {
-            throw new IllegalArgumentException("Lesson duration must be between 1 and 15 minutes");
+        if (lesson.getDurationMinutes() <= 0 || lesson.getDurationMinutes() > 15) {
+            throw new IllegalArgumentException("Invalid lesson duration");
         }
 
         lesson.setCourse(course);
@@ -32,6 +39,7 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     public MicroLesson updateLesson(Long lessonId, MicroLesson lesson) {
+
         MicroLesson existing = lessonRepository.findById(lessonId)
                 .orElseThrow(() -> new ResourceNotFoundException("Lesson not found"));
 
@@ -47,7 +55,7 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     public List<MicroLesson> findLessonsByFilters(String tags, String difficulty, String contentType) {
-        return lessonRepository.findByTagsContainingAndDifficultyAndContentType(tags, difficulty, contentType);
+        return lessonRepository.findByFilters(tags, difficulty, contentType);
     }
 
     @Override
