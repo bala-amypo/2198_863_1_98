@@ -10,11 +10,11 @@ import java.util.List;
 @Repository
 public interface RecommendationRepository extends JpaRepository<Recommendation, Long> {
 
-    List<Recommendation> findByUserIdOrderByGeneratedAtDesc(Long userId);
-
     List<Recommendation> findByUserIdAndGeneratedAtBetween(
             Long userId,
-            LocalDateTime from,
-            LocalDateTime to
+            LocalDateTime start,
+            LocalDateTime end
     );
+
+    List<Recommendation> findByUserIdOrderByGeneratedAtDesc(Long userId);
 }
