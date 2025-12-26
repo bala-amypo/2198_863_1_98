@@ -8,6 +8,8 @@ import com.example.demo.service.CourseService;
 
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CourseServiceImpl implements CourseService {
 
@@ -27,7 +29,7 @@ public class CourseServiceImpl implements CourseService {
                 .orElseThrow(() -> new RuntimeException("Instructor not found"));
 
         if (!"INSTRUCTOR".equals(instructor.getRole())) {
-            throw new RuntimeException("Only instructors can create courses");
+            throw new RuntimeException("User is not instructor");
         }
 
         if (courseRepository.existsByTitleAndInstructorId(
@@ -55,5 +57,10 @@ public class CourseServiceImpl implements CourseService {
     public Course getCourse(Long courseId) {
         return courseRepository.findById(courseId)
                 .orElseThrow(() -> new RuntimeException("Course not found"));
+    }
+
+    @Override
+    public List<Course> getAllCourses() {
+        return courseRepository.findAll();
     }
 }
