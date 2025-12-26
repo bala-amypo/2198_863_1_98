@@ -1,33 +1,12 @@
-package com.example.demo.controller;
+package com.example.demo.service;
 
 import com.example.demo.model.Course;
-import com.example.demo.service.CourseService;
-import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequestMapping("/api/courses")
-public class CourseController {
+public interface CourseService {
 
-    private final CourseService courseService;
+    Course createCourse(Course course, Long instructorId);
 
-    public CourseController(CourseService courseService) {
-        this.courseService = courseService;
-    }
+    Course updateCourse(Long courseId, Course updated);
 
-    @PostMapping("/{instructorId}")
-    public Course createCourse(@RequestBody Course course,
-                               @PathVariable Long instructorId) {
-        return courseService.createCourse(course, instructorId);
-    }
-
-    @PutMapping("/{courseId}")
-    public Course updateCourse(@PathVariable Long courseId,
-                               @RequestBody Course course) {
-        return courseService.updateCourse(courseId, course);
-    }
-
-    @GetMapping("/{courseId}")
-    public Course getCourse(@PathVariable Long courseId) {
-        return courseService.getCourse(courseId);
-    }
+    Course getCourse(Long courseId);
 }
