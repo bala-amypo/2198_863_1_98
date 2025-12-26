@@ -1,15 +1,25 @@
 package com.example.demo.dto;
 
-import lombok.*;
+import java.util.List;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class RecommendationRequest {
 
-    private String difficulty;
-    private String tags;
-    private Integer maxItems;
+    private Long userId;
+    private List<Long> completedLessonIds;
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public List<Long> getCompletedLessonIds() {
+        return completedLessonIds;
+    }
+
+    public void setCompletedLessonIds(List<Long> completedLessonIds) {
+        this.completedLessonIds = completedLessonIds;
+    }
 }

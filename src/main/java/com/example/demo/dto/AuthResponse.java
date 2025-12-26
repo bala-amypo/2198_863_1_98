@@ -1,15 +1,20 @@
 package com.example.demo.dto;
 
-import lombok.*;
-
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class AuthResponse {
+
     private String accessToken;
-    private Long userId;
-    private String email;
-    private String role;
+
+    public AuthResponse() {}
+
+    public AuthResponse(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
 }
