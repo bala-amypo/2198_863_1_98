@@ -1,66 +1,62 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.model.Course;
-import com.example.demo.model.MicroLesson;
-import com.example.demo.repository.CourseRepository;
-import com.example.demo.repository.MicroLessonRepository;
+import com.example.demo.dto.AuthResponse;
+import com.example.demo.model.User;
+import com.example.demo.repository.UserRepository;
+import com.example.demo.security.JwtUtil;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
-public class LessonServiceImpl {
+public class UserServiceImpl {
 
-    private final MicroLessonRepository microLessonRepository;
-    private final CourseRepository courseRepository;
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder encoder;
+    private final JwtUtil jwtUtil;
 
-    public LessonServiceImpl(MicroLessonRepository microLessonRepository,
-                             CourseRepository courseRepository) {
-        this.microLessonRepository = microLessonRepository;
-        this.courseRepository = courseRepository;
+    public UserServiceImpl(UserRepository userRepository,
+                           BCryptPasswordEncoder encoder,
+                           JwtUtil jwtUtil) {
+        this.userRepository = userRepository;
+        this.encoder = encoder;
+        this.jwtUtil = jwtUtil;
     }
 
-    public MicroLesson addLesson(Long courseId, MicroLesson lesson) {
+    public User register(User user) {
 
-        if (courseId == null || lesson == null) {
-            throw new RuntimeException("Invalid input");
+        if (user == null || user.getEmail() == null) {
+            throw new RuntimeException("Invalid user");
         }
 
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new RuntimeException("Course not found"));
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new RuntimeException("Email already exists");
+        }
 
-        lesson.setCourse(course);
-        return microLessonRepository.save(lesson);
+        user.setPassword(encoder.encode(user.getPassword()));
+        return userRepository.save(user);
     }
 
-    public MicroLesson updateLesson(Long lessonId, MicroLesson update) {
+    public AuthResponse login(String email, String password) {
 
-        MicroLesson existing = microLessonRepository.findById(lessonId)
-                .orElseThrow(() -> new RuntimeException("Lesson not found"));
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (update.getTitle() != null) {
-            existing.setTitle(update.getTitle());
-        }
-        if (update.getDifficulty() != null) {
-            existing.setDifficulty(update.getDifficulty());
-        }
-        if (update.getContentType() != null) {
-            existing.setContentType(update.getContentType());
+        if (!encoder.matches(password, user.getPassword())) {
+            throw new RuntimeException("Invalid credentials");
         }
 
-        return microLessonRepository.save(existing);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", user.getRole());
+
+        String token = jwtUtil.generateToken(claims, user.getEmail());
+        return new AuthResponse(token);
     }
 
-    public List<MicroLesson> findLessonsByFilters(
-            String tags,
-            String difficulty,
-            String contentType
-    ) {
-        return microLessonRepository.findByFilters(tags, difficulty, contentType);
-    }
-
-    public MicroLesson getLesson(Long id) {
-        return microLessonRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Lesson not found"));
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 }

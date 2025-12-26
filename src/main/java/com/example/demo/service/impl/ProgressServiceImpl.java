@@ -28,8 +28,8 @@ public class ProgressServiceImpl {
     }
 
     public Progress recordProgress(Long userId,
-                                   Long lessonId,
-                                   Progress incoming) {
+                                Long lessonId,
+                                Progress incoming) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -37,20 +37,19 @@ public class ProgressServiceImpl {
         MicroLesson lesson = microLessonRepository.findById(lessonId)
                 .orElseThrow(() -> new RuntimeException("Lesson not found"));
 
-        Optional<Progress> existing =
-                progressRepository.findByUserIdAndMicroLessonId(userId, lessonId);
-
-        Progress target = existing.orElseGet(Progress::new);
+        Progress target = progressRepository
+                .findByUserIdAndMicroLessonId(userId, lessonId)
+                .orElseGet(Progress::new);
 
         target.setUser(user);
         target.setMicroLesson(lesson);
         target.setProgressPercent(incoming.getProgressPercent());
         target.setStatus(incoming.getStatus());
         target.setScore(incoming.getScore());
-        target.setLastAccessedAt(LocalDateTime.now());
 
         return progressRepository.save(target);
     }
+
 
     public List<Progress> getUserProgress(Long userId) {
         return progressRepository.findByUserIdOrderByLastAccessedAtDesc(userId);
