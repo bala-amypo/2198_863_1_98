@@ -7,7 +7,6 @@ import com.example.demo.repository.MicroLessonRepository;
 import com.example.demo.repository.ProgressRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.ProgressService;
-
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -4,17 +4,14 @@ import com.example.demo.dto.AuthResponse;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.JwtUtil;
-import com.example.demo.service.UserService;
-
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
@@ -28,8 +25,8 @@ public class UserServiceImpl implements UserService {
         this.jwtUtil = jwtUtil;
     }
 
-    @Override
     public User register(User user) {
+
         if (user == null || user.getEmail() == null) {
             throw new RuntimeException("Invalid user");
         }
@@ -42,8 +39,8 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-    @Override
     public AuthResponse login(String email, String password) {
+
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -58,8 +55,8 @@ public class UserServiceImpl implements UserService {
         return new AuthResponse(token);
     }
 
-    @Override
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 }
