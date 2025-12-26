@@ -1,19 +1,62 @@
-public class RecommendationServiceImpl {
+package com.example.demo.service.impl;
 
-    private final RecommendationRepository repo;
-    private final UserRepository userRepo;
-    private final MicroLessonRepository lessonRepo;
+import com.example.demo.model.Course;
+import com.example.demo.model.User;
+import com.example.demo.repository.CourseRepository;
+import com.example.demo.repository.UserRepository;
+import org.springframework.stereotype.Service;
 
-    public RecommendationServiceImpl(
-            RecommendationRepository r, UserRepository u, MicroLessonRepository m) {
-        this.repo = r;
-        this.userRepo = u;
-        this.lessonRepo = m;
+@Service
+public class CourseServiceImpl {
+
+    private final CourseRepository courseRepository;
+    private final UserRepository userRepository;
+
+    public CourseServiceImpl(CourseRepository courseRepository,
+                             UserRepository userRepository) {
+        this.courseRepository = courseRepository;
+        this.userRepository = userRepository;
     }
 
-    public Recommendation getLatestRecommendation(Long userId) {
-        List<Recommendation> list = repo.findByUserIdOrderByGeneratedAtDesc(userId);
-        if (list.isEmpty()) throw new RuntimeException();
-        return list.get(0);
+    public Course createCourse(Course course, Long instructorId) {
+
+        if (course == null || instructorId == null) {
+            throw new RuntimeException("Invalid input");
+        }
+
+        User instructor = userRepository.findById(instructorId)
+                .orElseThrow(() -> new RuntimeException("Instructor not found"));
+
+        if (!"INSTRUCTOR".equals(instructor.getRole())
+                && !"ADMIN".equals(instructor.getRole())) {
+            throw new RuntimeException("Not allowed");
+        }
+
+        if (courseRepository.existsByTitleAndInstructorId(
+                course.getTitle(), instructorId)) {
+            throw new RuntimeException("Duplicate course");
+        }
+
+        course.setInstructor(instructor);
+        return courseRepository.save(course);
+    }
+
+    public Course updateCourse(Long id, Course update) {
+        Course existing = courseRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Course not found"));
+
+        if (update.getTitle() != null) {
+            existing.setTitle(update.getTitle());
+        }
+        if (update.getDescription() != null) {
+            existing.setDescription(update.getDescription());
+        }
+
+        return courseRepository.save(existing);
+    }
+
+    public Course getCourse(Long id) {
+        return courseRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Course not found"));
     }
 }
