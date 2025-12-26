@@ -1,33 +1,43 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import lombok.*;
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
-@Getter
-@Setter
+@Table(name = "courses")
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Course {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    
+    @Column(nullable = false)
     private String title;
-
+    
     private String description;
-
-    @ManyToOne
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "instructor_id", nullable = false)
     private User instructor;
-
+    
+    private String category;
+    
+    @Column(nullable = false)
     private LocalDateTime createdAt;
-
+    
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    private List<MicroLesson> microLessons;
+    
     @PrePersist
-    public void prePersist() {
-        this.createdAt = LocalDateTime.now();
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
     }
 }
