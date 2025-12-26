@@ -1,62 +1,62 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.model.Course;
+import com.example.demo.dto.AuthResponse;
 import com.example.demo.model.User;
-import com.example.demo.repository.CourseRepository;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.security.JwtUtil;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
-public class CourseServiceImpl {
+public class UserServiceImpl {
 
-    private final CourseRepository courseRepository;
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder encoder;
+    private final JwtUtil jwtUtil;
 
-    public CourseServiceImpl(CourseRepository courseRepository,
-                             UserRepository userRepository) {
-        this.courseRepository = courseRepository;
+    public UserServiceImpl(UserRepository userRepository,
+                           BCryptPasswordEncoder encoder,
+                           JwtUtil jwtUtil) {
         this.userRepository = userRepository;
+        this.encoder = encoder;
+        this.jwtUtil = jwtUtil;
     }
 
-    public Course createCourse(Course course, Long instructorId) {
+    public User register(User user) {
 
-        if (course == null || instructorId == null) {
-            throw new RuntimeException("Invalid input");
+        if (user == null || user.getEmail() == null) {
+            throw new RuntimeException("Invalid user");
         }
 
-        User instructor = userRepository.findById(instructorId)
-                .orElseThrow(() -> new RuntimeException("Instructor not found"));
-
-        if (!"INSTRUCTOR".equals(instructor.getRole())
-                && !"ADMIN".equals(instructor.getRole())) {
-            throw new RuntimeException("Not allowed");
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new RuntimeException("Email already exists");
         }
 
-        if (courseRepository.existsByTitleAndInstructorId(
-                course.getTitle(), instructorId)) {
-            throw new RuntimeException("Duplicate course");
-        }
-
-        course.setInstructor(instructor);
-        return courseRepository.save(course);
+        user.setPassword(encoder.encode(user.getPassword()));
+        return userRepository.save(user);
     }
 
-    public Course updateCourse(Long id, Course update) {
-        Course existing = courseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Course not found"));
+    public AuthResponse login(String email, String password) {
 
-        if (update.getTitle() != null) {
-            existing.setTitle(update.getTitle());
-        }
-        if (update.getDescription() != null) {
-            existing.setDescription(update.getDescription());
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!encoder.matches(password, user.getPassword())) {
+            throw new RuntimeException("Invalid credentials");
         }
 
-        return courseRepository.save(existing);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", user.getRole());
+
+        String token = jwtUtil.generateToken(claims, user.getEmail());
+        return new AuthResponse(token);
     }
 
-    public Course getCourse(Long id) {
-        return courseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Course not found"));
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 }
