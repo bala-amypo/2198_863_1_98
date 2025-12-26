@@ -10,7 +10,9 @@ public interface LessonService {
 
     MicroLesson updateLesson(Long lessonId, MicroLesson lesson);
 
-    MicroLesson getLesson(Long lessonId);
+    List<MicroLesson> findLessonsByFilters(String tags,
+                                           String difficulty,
+                                           String contentType);
 
-    List<MicroLesson> findLessonsByFilters(String tags, String difficulty, String contentType);
+    MicroLesson getLesson(Long lessonId);
 }
