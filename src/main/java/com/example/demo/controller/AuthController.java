@@ -1,28 +1,35 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.ApiResponse;
+import com.example.demo.dto.AuthRequest;
 import com.example.demo.dto.AuthResponse;
 import com.example.demo.model.User;
 import com.example.demo.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
+@Tag(name = "Authentication", description = "Authentication endpoints")
 public class AuthController {
-
-    private final UserService userService;
-
-    public AuthController(UserService userService) {
-        this.userService = userService;
-    }
-
+    
+    @Autowired
+    private UserService userService;
+    
     @PostMapping("/register")
-    public User register(@RequestBody User user) {
-        return userService.register(user);
+    @Operation(summary = "Register a new user")
+    public ResponseEntity<ApiResponse> register(@RequestBody User user) {
+        User registeredUser = userService.register(user);
+        return ResponseEntity.ok(new ApiResponse(true, "User registered successfully", registeredUser));
     }
-
+    
     @PostMapping("/login")
-    public AuthResponse login(@RequestParam String email,
-                              @RequestParam String password) {
-        return userService.login(email, password);
+    @Operation(summary = "Login user")
+    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest authRequest) {
+        AuthResponse response = userService.login(authRequest.getEmail(), authRequest.getPassword());
+        return ResponseEntity.ok(response);
     }
 }
