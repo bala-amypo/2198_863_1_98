@@ -8,9 +8,9 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Course {
 
     @Id
@@ -18,6 +18,7 @@ public class Course {
     private Long id;
 
     private String title;
+
     private String description;
 
     @ManyToOne
