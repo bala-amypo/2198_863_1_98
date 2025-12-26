@@ -26,8 +26,10 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private JwtUtil jwtUtil;
 
+    // ---------------- REGISTER ----------------
     @Override
     public User register(User user) {
+
         if (user == null || user.getEmail() == null || user.getPassword() == null) {
             throw new IllegalArgumentException("User data is invalid");
         }
@@ -44,6 +46,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
+    // ---------------- LOGIN ----------------
     @Override
     public AuthResponse login(String email, String password) {
 
@@ -54,20 +57,22 @@ public class UserServiceImpl implements UserService {
             throw new BadCredentialsException("Invalid credentials");
         }
 
+        // JWT claims
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", user.getId());
         claims.put("role", user.getRole());
 
         String token = jwtUtil.generateToken(claims, email);
 
-        // ✅ FIXED BUILDER (matches AuthResponse fields exactly)
+        // ✅ BUILDER MATCHES DTO FIELD NAMES EXACTLY
         return AuthResponse.builder()
-                .token(token)
+                .accessToken(token)
                 .username(user.getEmail())
                 .role(user.getRole())
                 .build();
     }
 
+    // ---------------- FIND USER ----------------
     @Override
     public User findById(Long id) {
         return userRepository.findById(id)
