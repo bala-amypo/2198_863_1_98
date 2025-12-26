@@ -6,7 +6,6 @@ import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.JwtUtil;
 import com.example.demo.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,39 +16,35 @@ import java.util.Map;
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    public UserServiceImpl(UserRepository userRepository,
+                           BCryptPasswordEncoder passwordEncoder,
+                           JwtUtil jwtUtil) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
+    }
 
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    // ---------------- REGISTER ----------------
     @Override
     public User register(User user) {
-
         if (user == null || user.getEmail() == null || user.getPassword() == null) {
             throw new IllegalArgumentException("User data is invalid");
         }
-
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new IllegalArgumentException("Email already exists");
         }
-
         if (user.getRole() == null) {
             user.setRole("LEARNER");
         }
-
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
-    // ---------------- LOGIN ----------------
     @Override
     public AuthResponse login(String email, String password) {
-
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new BadCredentialsException("Invalid credentials"));
 
@@ -57,14 +52,12 @@ public class UserServiceImpl implements UserService {
             throw new BadCredentialsException("Invalid credentials");
         }
 
-        // JWT claims
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", user.getId());
         claims.put("role", user.getRole());
 
         String token = jwtUtil.generateToken(claims, email);
 
-        // ✅ BUILDER MATCHES DTO FIELD NAMES EXACTLY
         return AuthResponse.builder()
                 .accessToken(token)
                 .username(user.getEmail())
@@ -72,7 +65,6 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-    // ---------------- FIND USER ----------------
     @Override
     public User findById(Long id) {
         return userRepository.findById(id)
