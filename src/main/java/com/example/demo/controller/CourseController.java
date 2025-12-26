@@ -2,41 +2,38 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Course;
 import com.example.demo.service.CourseService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/courses")
+@RequestMapping("/courses")
 public class CourseController {
 
-    private final CourseService courseService;
+    @Autowired
+    private CourseService courseService;
 
-    public CourseController(CourseService courseService) {
-        this.courseService = courseService;
-    }
-
+    // CREATE course
     @PostMapping
-    public Course createCourse(@RequestBody Course course) {
-        return courseService.createCourse(course);
+    public Course createCourse(@RequestBody Course course,
+                               @RequestParam Long instructorId) {
+        return courseService.createCourse(course, instructorId);
     }
 
+    // GET course by ID
     @GetMapping("/{id}")
     public Course getCourseById(@PathVariable Long id) {
         return courseService.getCourseById(id);
     }
 
+    // GET all courses
     @GetMapping
     public List<Course> getAllCourses() {
         return courseService.getAllCourses();
     }
 
-    @PutMapping("/{id}")
-    public Course updateCourse(@PathVariable Long id,
-                               @RequestBody Course course) {
-        return courseService.updateCourse(id, course);
-    }
-
+    // DELETE course by ID
     @DeleteMapping("/{id}")
     public void deleteCourse(@PathVariable Long id) {
         courseService.deleteCourse(id);
