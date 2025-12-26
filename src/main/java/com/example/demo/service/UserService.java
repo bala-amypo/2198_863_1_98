@@ -1,15 +1,15 @@
-// package com.example.demo.service;
+package com.example.demo.service;
 
-// import com.example.demo.model.User;
-// import com.example.demo.dto.AuthResponse;
+import com.example.demo.dto.AuthResponse;
+import com.example.demo.model.User;
 
-// public interface UserService {
+import java.util.Optional;
 
-//     User register(User user);
+public interface UserService {
 
-//     AuthResponse login(String email, String password);
+    User register(User user);
 
-//     User findById(Long id);
+    AuthResponse login(String email, String password);
 
-//     User findByEmail(String email);
-// }
+    Optional<User> findByEmail(String email);
+}
