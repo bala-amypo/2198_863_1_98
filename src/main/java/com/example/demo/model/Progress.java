@@ -1,58 +1,38 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "progress")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Progress {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+
+    @ManyToOne
     private User user;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "micro_lesson_id", nullable = false)
+
+    @ManyToOne
     private MicroLesson microLesson;
-    
-    @Column(nullable = false)
-    @Builder.Default
-    private String status = "NOT_STARTED";
-    
-    @Column(nullable = false)
-    @Builder.Default
-    private Integer progressPercent = 0;
-    
-    @Column(nullable = false)
+
+    private String status; // NOT_STARTED / IN_PROGRESS / COMPLETED
+
+    private Integer progressPercent;
+
     private LocalDateTime lastAccessedAt;
-    
+
     private BigDecimal score;
-    
+
     @PrePersist
-    protected void onCreate() {
-        lastAccessedAt = LocalDateTime.now();
-        if (status == null) {
-            status = "NOT_STARTED";
-        }
-        if (progressPercent == null) {
-            progressPercent = 0;
-        }
-    }
-    
-    @PreUpdate
-    protected void onUpdate() {
-        lastAccessedAt = LocalDateTime.now();
+    public void prePersist() {
+        this.lastAccessedAt = LocalDateTime.now();
     }
 }
