@@ -1,24 +1,3 @@
-package com.example.demo.service.impl;
-
-import com.example.demo.dto.RecommendationRequest;
-import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.model.MicroLesson;
-import com.example.demo.model.Progress;
-import com.example.demo.model.Recommendation;
-import com.example.demo.model.User;
-import com.example.demo.repository.MicroLessonRepository;
-import com.example.demo.repository.ProgressRepository;
-import com.example.demo.repository.RecommendationRepository;
-import com.example.demo.repository.UserRepository;
-import com.example.demo.service.RecommendationService;
-import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
 public class RecommendationServiceImpl implements RecommendationService {
 
@@ -27,19 +6,12 @@ public class RecommendationServiceImpl implements RecommendationService {
     private final MicroLessonRepository microLessonRepository;
     private final ProgressRepository progressRepository;
 
-    public RecommendationServiceImpl(RecommendationRepository recommendationRepository,
-                                     UserRepository userRepository,
-                                     MicroLessonRepository microLessonRepository) {
-        this.recommendationRepository = recommendationRepository;
-        this.userRepository = userRepository;
-        this.microLessonRepository = microLessonRepository;
-        this.progressRepository = null;
-    }
-
-    public RecommendationServiceImpl(RecommendationRepository recommendationRepository,
-                                     UserRepository userRepository,
-                                     MicroLessonRepository microLessonRepository,
-                                     ProgressRepository progressRepository) {
+    public RecommendationServiceImpl(
+            RecommendationRepository recommendationRepository,
+            UserRepository userRepository,
+            MicroLessonRepository microLessonRepository,
+            ProgressRepository progressRepository
+    ) {
         this.recommendationRepository = recommendationRepository;
         this.userRepository = userRepository;
         this.microLessonRepository = microLessonRepository;
@@ -54,7 +26,7 @@ public class RecommendationServiceImpl implements RecommendationService {
         List<Progress> progressList =
                 progressRepository.findByUserIdOrderByLastAccessedAtDesc(userId);
 
-        String tags = params.getTags() == null || params.getTags().isEmpty()
+        String tags = (params.getTags() == null || params.getTags().isEmpty())
                 ? null
                 : String.join(",", params.getTags());
 
@@ -67,12 +39,12 @@ public class RecommendationServiceImpl implements RecommendationService {
         List<Long> completedIds = progressList.stream()
                 .filter(p -> "COMPLETED".equals(p.getStatus()))
                 .map(p -> p.getMicroLesson().getId())
-                .collect(Collectors.toList());
+                .toList();
 
         List<MicroLesson> recommended = candidates.stream()
                 .filter(l -> !completedIds.contains(l.getId()))
                 .limit(params.getMaxItems() != null ? params.getMaxItems() : 5)
-                .collect(Collectors.toList());
+                .toList();
 
         String ids = recommended.stream()
                 .map(l -> l.getId().toString())
@@ -93,6 +65,7 @@ public class RecommendationServiceImpl implements RecommendationService {
     public Recommendation getLatestRecommendation(Long userId) {
         List<Recommendation> list =
                 recommendationRepository.findByUserIdOrderByGeneratedAtDesc(userId);
+
         if (list.isEmpty()) {
             throw new ResourceNotFoundException("No recommendations found");
         }
