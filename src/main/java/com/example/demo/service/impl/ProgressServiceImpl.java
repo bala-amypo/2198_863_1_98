@@ -6,14 +6,13 @@ import com.example.demo.model.User;
 import com.example.demo.repository.MicroLessonRepository;
 import com.example.demo.repository.ProgressRepository;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.service.ProgressService;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
-public class ProgressServiceImpl {
+public class ProgressServiceImpl implements ProgressService {
 
     private final ProgressRepository progressRepository;
     private final UserRepository userRepository;
@@ -27,9 +26,10 @@ public class ProgressServiceImpl {
         this.microLessonRepository = microLessonRepository;
     }
 
+    @Override
     public Progress recordProgress(Long userId,
-                                Long lessonId,
-                                Progress incoming) {
+                                   Long lessonId,
+                                   Progress incoming) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -50,7 +50,7 @@ public class ProgressServiceImpl {
         return progressRepository.save(target);
     }
 
-
+    @Override
     public List<Progress> getUserProgress(Long userId) {
         return progressRepository.findByUserIdOrderByLastAccessedAtDesc(userId);
     }
