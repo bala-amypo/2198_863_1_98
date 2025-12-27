@@ -30,7 +30,7 @@ public class SwaggerConfig {
                         .description("College Review – Secure API with JWT"))
                 .servers(List.of(
                         new Server()
-                                .url("https://9149.32procr.amypo.ai/")
+                                .url("https://9089.32procr.amypo.ai/")
                                 .description("College Deployment Server")
                 ))
                 .components(new Components()
